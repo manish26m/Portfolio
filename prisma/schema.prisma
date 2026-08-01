@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Project {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  title            String
+  shortDescription String
+  description      String         @db.Text
+  overview         String?        @db.Text
+  problem          String?        @db.Text
+  solution         String?        @db.Text
+  architecture     String?        @db.Text
+  challenges       String?        @db.Text
+  decisions        String?        @db.Text
+  performance      String?        @db.Text
+  lessons          String?        @db.Text
+  futureWork       String?        @db.Text
+  thumbnailUrl     String?
+  heroImageUrl     String?
+  liveUrl          String?
+  githubUrl        String?
+  status           ProjectStatus  @default(DRAFT)
+  featured         Boolean        @default(false)
+  order            Int            @default(0)
+  category         String[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  technologies     Technology[]   @relation("ProjectTechnologies")
+  images           ProjectImage[]
+
+  @@map("projects")
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  url       String
+  publicId  String?
+  caption   String?
+  order     Int      @default(0)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("project_images")
+}
+
+model Technology {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  icon     String?
+  color    String?
+  projects Project[] @relation("ProjectTechnologies")
+  skills   Skill[]   @relation("SkillTechnologies")
+
+  @@map("technologies")
+}
+
+model Experience {
+  id           String   @id @default(cuid())
+  company      String
+  role         String
+  type         String   @default("Internship")
+  location     String?
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean  @default(false)
+  description  String   @db.Text
+  achievements String[]
+  technologies String[]
+  logoUrl      String?
+  companyUrl   String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("experiences")
+}
+
+model Skill {
+  id           String       @id @default(cuid())
+  category     String
+  name         String
+  proficiency  Int          @default(80)
+  description  String?
+  order        Int          @default(0)
+  technologies Technology[] @relation("SkillTechnologies")
+  createdAt    DateTime     @default(now())
+
+  @@map("skills")
+}
+
+model Hero {
+  id          String   @id @default(cuid())
+  name        String
+  titles      String[]
+  tagline     String
+  description String   @db.Text
+  ctaPrimary  String   @default("Explore Projects")
+  ctaSecondary String  @default("Download Resume")
+  ctaTertiary String   @default("Contact")
+  updatedAt   DateTime @updatedAt
+
+  @@map("hero")
+}
+
+model Stat {
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  suffix    String?
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("stats")
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  username  String?
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("social_links")
+}
+
+model Resume {
+  id        String   @id @default(cuid())
+  url       String
+  publicId  String?
+  filename  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("resume")
+}
+
+model Settings {
+  id              String   @id @default(cuid())
+  siteTitle       String   @default("Manish Mishra")
+  siteDescription String?  @db.Text
+  email           String?
+  phone           String?
+  location        String?
+  calendarUrl     String?
+  metaKeywords    String?
+  ogImage         String?
+  aboutHeading    String?  @default("Engineering Intelligence.")
+  aboutText       String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model JourneyEvent {
+  id          String   @id @default(cuid())
+  year        String
+  title       String
+  description String   @db.Text
+  icon        String   @default("GraduationCap")
+  color       String   @default("sky")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("journey_events")
+}
+
+model QuickFact {
+  id          String   @id @default(cuid())
+  label       String
+  value       String
+  sub         String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("quick_facts")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
