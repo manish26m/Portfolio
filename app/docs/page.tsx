@@ -1,4 +1,4 @@
-import { Terminal, Shield, Home, Mail, UserCircle, FolderCode, Briefcase, Award, Settings as SettingsIcon } from "lucide-react";
+import { Terminal, Shield, Home, Mail, UserCircle, FolderCode, Briefcase, Award, Settings as SettingsIcon, FileText } from "lucide-react";
 import Link from "next/link";
 
 export default function DocsPage() {
@@ -10,7 +10,7 @@ export default function DocsPage() {
       { path: "/admin/login", desc: "Authentication gateway for the God Mode dashboard.", icon: Shield },
       { path: "/admin/dashboard", desc: "Overview of your portfolio's metrics and quick actions.", icon: Terminal },
       { path: "/admin/messages", desc: "Your inbox. Read and manage messages from the contact form.", icon: Mail },
-      { path: "/admin/hero", desc: "Edit the main landing page text (Name, Titles, Tagline).", icon: Type },
+      { path: "/admin/hero", desc: "Edit the main landing page text (Name, Titles, Tagline).", icon: FileText },
       { path: "/admin/about", desc: "Edit your biography and the Journey timeline.", icon: UserCircle },
       { path: "/admin/projects", desc: "Manage your portfolio projects and case studies.", icon: FolderCode },
       { path: "/admin/experience", desc: "Manage your work history and internships.", icon: Briefcase },
