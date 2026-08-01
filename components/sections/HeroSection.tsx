@@ -58,7 +58,7 @@ export function HeroSection({ hero, resume }: HeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-6"
+          className="mb-6 pt-8"
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-sky-400/20 text-sky-400 text-sm font-medium">
             <Sparkles size={14} className="animate-pulse" />
