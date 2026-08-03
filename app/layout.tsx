@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
+import prisma from "@/lib/db";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,11 +11,9 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Manish Mishra — AI Engineer & Data Engineer",
-    template: "%s | Manish Mishra",
-  },
+// Fallback defaults used when admin settings fields are empty
+const DEFAULTS = {
+  title: "Manish Mishra — AI Engineer & Data Engineer",
   description:
     "Portfolio of Manish Mishra — AI Engineer, Data Engineer, and Full-Stack Developer specializing in production-grade intelligent systems, LLM pipelines, and enterprise data platforms.",
   keywords: [
@@ -28,40 +27,63 @@ export const metadata: Metadata = {
     "LLM",
     "Manish Mishra",
   ],
-  authors: [{ name: "Manish Mishra" }],
-  creator: "Manish Mishra",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://manishmishra.dev",
-    title: "Manish Mishra — AI Engineer & Data Engineer",
-    description:
-      "Building production-grade intelligent systems, LLM pipelines, and enterprise data platforms.",
-    siteName: "Manish Mishra",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Manish Mishra — AI Engineer & Data Engineer",
-    description: "Building intelligent systems that matter.",
-    creator: "@manish26m",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://manishmishra.dev",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  // Fetch live settings from DB (safe — layout is a Server Component)
+  const settings = await prisma.settings.findFirst().catch(() => null);
+
+  const title = settings?.siteTitle || DEFAULTS.title;
+  const description = settings?.siteDescription || DEFAULTS.description;
+  const keywords = settings?.metaKeywords
+    ? settings.metaKeywords.split(",").map((k) => k.trim()).filter(Boolean)
+    : DEFAULTS.keywords;
+  const ogImage = settings?.ogImage || undefined;
+
+  return {
+    title: {
+      default: title,
+      template: `%s | Manish Mishra`,
+    },
+    description,
+    keywords,
+    authors: [{ name: "Manish Mishra" }],
+    creator: "Manish Mishra",
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: DEFAULTS.siteUrl,
+      title,
+      description,
+      siteName: "Manish Mishra",
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: title }] }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@manish26m",
+      ...(ogImage && { images: [ogImage] }),
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
-  },
-};
+    icons: {
+      icon: "/favicon.png",
+      shortcut: "/favicon.png",
+      apple: "/favicon.png",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
