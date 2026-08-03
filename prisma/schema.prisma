@@ -112,15 +112,16 @@ model Skill {
 }
 
 model Hero {
-  id          String   @id @default(cuid())
-  name        String
-  titles      String[]
-  tagline     String
-  description String   @db.Text
-  ctaPrimary  String   @default("Explore Projects")
-  ctaSecondary String  @default("Download Resume")
-  ctaTertiary String   @default("Contact")
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  titles       String[]
+  tagline      String
+  description  String   @db.Text
+  photoUrl     String?
+  ctaPrimary   String   @default("Explore Projects")
+  ctaSecondary String   @default("Download Resume")
+  ctaTertiary  String   @default("Contact")
+  updatedAt    DateTime @updatedAt
 
   @@map("hero")
 }

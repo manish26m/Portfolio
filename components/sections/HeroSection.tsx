@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NeuralNetworkBackground } from "@/components/animations/NeuralNetworkBackground";
 import { ChevronDown, Download, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface HeroProps {
   hero: any;
@@ -19,6 +20,7 @@ export function HeroSection({ hero, resume }: HeroProps) {
   const ctaPrimary = hero?.ctaPrimary || "Explore Projects";
   const ctaSecondary = hero?.ctaSecondary || "Download Resume";
   const ctaTertiary = hero?.ctaTertiary || "Contact";
+  const photoUrl = hero?.photoUrl || null;
 
   const [titleIndex, setTitleIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -52,140 +54,308 @@ export function HeroSection({ hero, resume }: HeroProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-wide text-center flex flex-col items-center">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-6 pt-8"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-sky-400/20 text-sky-400 text-sm font-medium">
-            <Sparkles size={14} className="animate-pulse" />
-            Available for opportunities
-          </span>
-        </motion.div>
+      <div className="relative z-10 container-wide w-full">
+        {photoUrl ? (
+          /* ── Two-column layout when photo is set ── */
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 pt-8">
 
-        {/* Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-          className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight leading-none mb-4"
-        >
-          <span className="text-white">{name.split(" ")[0]}</span>
-          <br />
-          <span className="gradient-text">{name.split(" ").slice(1).join(" ")}</span>
-        </motion.h1>
-
-        {/* Rotating title */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="h-12 sm:h-14 flex items-center justify-center mb-6"
-        >
-          <AnimatePresence mode="wait">
-            {mounted && (
-              <motion.span
-                key={titleIndex}
-                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="text-xl sm:text-2xl lg:text-3xl font-medium text-white/70"
+            {/* Left — text content */}
+            <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl">
+              {/* Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="mb-6"
               >
-                {titles[titleIndex]}
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-sky-400/20 text-sky-400 text-sm font-medium">
+                  <Sparkles size={14} className="animate-pulse" />
+                  Available for opportunities
+                </span>
+              </motion.div>
 
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="max-w-2xl text-base sm:text-lg text-white/50 leading-relaxed mb-10"
-        >
-          <span className="text-white/80 font-medium">{tagline}</span>
-          <br />
-          {description}
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.85 }}
-          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4"
-        >
-          {/* Primary CTA */}
-          <button
-            onClick={scrollToProjects}
-            className="group relative px-7 py-3.5 rounded-2xl font-semibold text-sm bg-gradient-to-r from-sky-400 to-indigo-500 text-white overflow-hidden shadow-[0_0_30px_rgba(56,189,248,0.35)] hover:shadow-[0_0_50px_rgba(56,189,248,0.55)] transition-all duration-300 hover:scale-[1.03]"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              {ctaPrimary}
-              <motion.span
-                animate={{ x: [0, 4, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
+              {/* Name */}
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none mb-4"
               >
-                →
-              </motion.span>
-            </span>
-            {/* Shimmer */}
-            <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          </button>
+                <span className="text-white">{name.split(" ")[0]}</span>
+                <br />
+                <span className="gradient-text">{name.split(" ").slice(1).join(" ")}</span>
+              </motion.h1>
 
-          {/* Secondary CTA */}
-          {resume?.url ? (
-            <a
-              href={resume.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+              {/* Rotating title */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="h-12 sm:h-14 flex items-center justify-center lg:justify-start mb-6"
+              >
+                <AnimatePresence mode="wait">
+                  {mounted && (
+                    <motion.span
+                      key={titleIndex}
+                      initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="text-xl sm:text-2xl lg:text-3xl font-medium text-white/70"
+                    >
+                      {titles[titleIndex]}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              {/* Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="max-w-xl text-base sm:text-lg text-white/50 leading-relaxed mb-10"
+              >
+                <span className="text-white/80 font-medium">{tagline}</span>
+                <br />
+                {description}
+              </motion.p>
+
+              {/* CTAs */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.85 }}
+                className="flex flex-col sm:flex-row items-center lg:items-start gap-3 sm:gap-4"
+              >
+                {/* Primary CTA */}
+                <button
+                  onClick={scrollToProjects}
+                  className="group relative px-7 py-3.5 rounded-2xl font-semibold text-sm bg-gradient-to-r from-sky-400 to-indigo-500 text-white overflow-hidden shadow-[0_0_30px_rgba(56,189,248,0.35)] hover:shadow-[0_0_50px_rgba(56,189,248,0.55)] transition-all duration-300 hover:scale-[1.03]"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {ctaPrimary}
+                    <motion.span
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                    >
+                      →
+                    </motion.span>
+                  </span>
+                  {/* Shimmer */}
+                  <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                </button>
+
+                {/* Secondary CTA */}
+                {resume?.url ? (
+                  <a
+                    href={resume.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+                  >
+                    <Download size={15} />
+                    {ctaSecondary}
+                  </a>
+                ) : (
+                  <a
+                    href="/resume.pdf"
+                    download
+                    className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+                  >
+                    <Download size={15} />
+                    {ctaSecondary}
+                  </a>
+                )}
+
+                {/* Tertiary CTA */}
+                <button
+                  onClick={scrollToContact}
+                  className="px-7 py-3.5 rounded-2xl font-semibold text-sm text-white/50 hover:text-white/80 flex items-center gap-2 transition-all duration-300"
+                >
+                  <Send size={14} />
+                  {ctaTertiary}
+                </button>
+              </motion.div>
+            </div>
+
+            {/* Right — profile photo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, x: 40 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.9, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              className="flex-shrink-0 flex items-center justify-center"
             >
-              <Download size={15} />
-              {ctaSecondary}
-            </a>
-          ) : (
-            <a
-              href="/resume.pdf"
-              download
-              className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+              <div className="relative">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-sky-400/30 via-indigo-500/20 to-violet-500/30 blur-2xl scale-110 animate-pulse" />
+                {/* Spinning dashed border */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-[-6px] rounded-full border-2 border-dashed border-sky-400/20"
+                />
+                {/* Solid ring */}
+                <div className="absolute inset-[-3px] rounded-full bg-gradient-to-br from-sky-400 via-indigo-500 to-violet-500 p-[2px]">
+                  <div className="w-full h-full rounded-full bg-[#080808]" />
+                </div>
+                {/* Photo */}
+                <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 rounded-full overflow-hidden border-2 border-sky-400/20">
+                  <Image
+                    src={photoUrl}
+                    alt={name}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                {/* Status dot */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full glass border border-emerald-400/30 backdrop-blur-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs text-emerald-400 font-medium">Available</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        ) : (
+          /* ── Original centered layout (no photo) ── */
+          <div className="flex flex-col items-center text-center pt-8">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6"
             >
-              <Download size={15} />
-              {ctaSecondary}
-            </a>
-          )}
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-sky-400/20 text-sky-400 text-sm font-medium">
+                <Sparkles size={14} className="animate-pulse" />
+                Available for opportunities
+              </span>
+            </motion.div>
 
-          {/* Tertiary CTA */}
-          <button
-            onClick={scrollToContact}
-            className="px-7 py-3.5 rounded-2xl font-semibold text-sm text-white/50 hover:text-white/80 flex items-center gap-2 transition-all duration-300"
-          >
-            <Send size={14} />
-            {ctaTertiary}
-          </button>
-        </motion.div>
+            {/* Name */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+              className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight leading-none mb-4"
+            >
+              <span className="text-white">{name.split(" ")[0]}</span>
+              <br />
+              <span className="gradient-text">{name.split(" ").slice(1).join(" ")}</span>
+            </motion.h1>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-white/25 tracking-widest uppercase font-medium">Scroll</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          >
-            <ChevronDown size={16} className="text-white/25" />
-          </motion.div>
-        </motion.div>
+            {/* Rotating title */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="h-12 sm:h-14 flex items-center justify-center mb-6"
+            >
+              <AnimatePresence mode="wait">
+                {mounted && (
+                  <motion.span
+                    key={titleIndex}
+                    initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="text-xl sm:text-2xl lg:text-3xl font-medium text-white/70"
+                  >
+                    {titles[titleIndex]}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="max-w-2xl text-base sm:text-lg text-white/50 leading-relaxed mb-10"
+            >
+              <span className="text-white/80 font-medium">{tagline}</span>
+              <br />
+              {description}
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.85 }}
+              className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4"
+            >
+              {/* Primary CTA */}
+              <button
+                onClick={scrollToProjects}
+                className="group relative px-7 py-3.5 rounded-2xl font-semibold text-sm bg-gradient-to-r from-sky-400 to-indigo-500 text-white overflow-hidden shadow-[0_0_30px_rgba(56,189,248,0.35)] hover:shadow-[0_0_50px_rgba(56,189,248,0.55)] transition-all duration-300 hover:scale-[1.03]"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {ctaPrimary}
+                  <motion.span
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  >
+                    →
+                  </motion.span>
+                </span>
+                {/* Shimmer */}
+                <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </button>
+
+              {/* Secondary CTA */}
+              {resume?.url ? (
+                <a
+                  href={resume.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+                >
+                  <Download size={15} />
+                  {ctaSecondary}
+                </a>
+              ) : (
+                <a
+                  href="/resume.pdf"
+                  download
+                  className="px-7 py-3.5 rounded-2xl font-semibold text-sm glass border border-white/10 hover:border-sky-400/30 text-white/80 hover:text-white flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] hover:bg-white/5"
+                >
+                  <Download size={15} />
+                  {ctaSecondary}
+                </a>
+              )}
+
+              {/* Tertiary CTA */}
+              <button
+                onClick={scrollToContact}
+                className="px-7 py-3.5 rounded-2xl font-semibold text-sm text-white/50 hover:text-white/80 flex items-center gap-2 transition-all duration-300"
+              >
+                <Send size={14} />
+                {ctaTertiary}
+              </button>
+            </motion.div>
+          </div>
+        )}
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
+      >
+        <span className="text-xs text-white/25 tracking-widest uppercase font-medium">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+        >
+          <ChevronDown size={16} className="text-white/25" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
+

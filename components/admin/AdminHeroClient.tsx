@@ -10,6 +10,7 @@ interface Hero {
   titles: string[];
   tagline: string;
   description: string;
+  photoUrl?: string;
   ctaPrimary: string;
   ctaSecondary: string;
   ctaTertiary: string;
@@ -60,6 +61,10 @@ export function AdminHeroClient({ initialData }: { initialData?: Hero }) {
         <div>
           <label className={labelClass}>Your Name</label>
           <input type="text" value={form.name || ""} onChange={(e) => set("name", e.target.value)} className={inputClass} placeholder="Manish Mishra" />
+        </div>
+        <div>
+          <label className={labelClass}>Profile Photo URL</label>
+          <input type="url" value={form.photoUrl || ""} onChange={(e) => set("photoUrl", e.target.value)} className={inputClass} placeholder="https://..." />
         </div>
         <div>
           <label className={labelClass}>Rotating Titles (e.g., AI Engineer, Python Developer)</label>
