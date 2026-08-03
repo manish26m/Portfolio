@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
     revalidatePath("/admin");
 
     // 3. Try to send email notification, but don't fail the request if it errors
+    let emailStatus = "not_configured";
+    let emailErrorDetails = null;
+
     if (resend) {
       try {
         const settings = await prisma.settings.findFirst();
@@ -35,20 +38,37 @@ export async function POST(request: NextRequest) {
         const fromEmail = process.env.RESEND_FROM_EMAIL || "Portfolio Contact Form <onboarding@resend.dev>";
 
         if (adminEmail) {
-          await resend.emails.send({
+          const { data, error } = await resend.emails.send({
             from: fromEmail,
             to: adminEmail,
             subject: `New Contact Form Submission: ${subject || "No Subject"}`,
             text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
           });
+
+          if (error) {
+            console.error("Resend API Error:", error);
+            emailStatus = "failed";
+            emailErrorDetails = error;
+          } else {
+            console.log("Resend Email Sent Successfully:", data);
+            emailStatus = "sent";
+          }
+        } else {
+          emailStatus = "no_admin_email";
         }
       } catch (emailError) {
         console.error("Failed to send email notification via Resend:", emailError);
-        // We log the error but do NOT throw it, so the user still sees a success message
+        emailStatus = "exception";
+        emailErrorDetails = emailError;
       }
     }
 
-    return NextResponse.json({ success: true, id: contact.id });
+    return NextResponse.json({ 
+      success: true, 
+      id: contact.id,
+      emailStatus,
+      emailErrorDetails
+    });
   } catch (error) {
     console.error("Contact error:", error);
     return NextResponse.json({ error: "Failed to save message" }, { status: 500 });
