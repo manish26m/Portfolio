@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
           const { data, error } = await resend.emails.send({
             from: fromEmail,
             to: adminEmail,
+            reply_to: email, // This allows you to just hit "Reply" in Gmail!
             subject: `New Contact Form Submission: ${subject || "No Subject"}`,
             text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
           });
