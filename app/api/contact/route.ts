@@ -15,31 +15,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 1. ALWAYS save to the database first (Admin Inbox)
     const contact = await prisma.contactMessage.create({
       data: { name, email, subject, message },
     });
 
-    // Send email notification if Resend is configured
+    // 2. Try to send email notification, but don't fail the request if it errors
     if (resend) {
-      const settings = await prisma.settings.findFirst();
-      const adminEmail = settings?.email || process.env.ADMIN_EMAIL;
+      try {
+        const settings = await prisma.settings.findFirst();
+        const adminEmail = settings?.email || process.env.ADMIN_EMAIL;
 
-      if (adminEmail) {
-        await resend.emails.send({
-          from: "Portfolio Contact Form <onboarding@resend.dev>", // Note: Use your verified domain in production
-          to: adminEmail,
-          subject: `New Contact Form Submission: ${subject || "No Subject"}`,
-          text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-        });
-      } else {
-        console.warn("Resend is configured but no admin email is set in settings or env.");
+        if (adminEmail) {
+          await resend.emails.send({
+            from: "Portfolio Contact Form <onboarding@resend.dev>", // Resend free tier requires this 'from' address
+            to: adminEmail,
+            subject: `New Contact Form Submission: ${subject || "No Subject"}`,
+            text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+          });
+        }
+      } catch (emailError) {
+        console.error("Failed to send email notification via Resend:", emailError);
+        // We log the error but do NOT throw it, so the user still sees a success message
       }
     }
 
     return NextResponse.json({ success: true, id: contact.id });
   } catch (error) {
     console.error("Contact error:", error);
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save message" }, { status: 500 });
   }
 }
 
