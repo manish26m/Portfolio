@@ -21,6 +21,8 @@ export function HeroSection({ hero, resume }: HeroProps) {
   const ctaSecondary = hero?.ctaSecondary || "Download Resume";
   const ctaTertiary = hero?.ctaTertiary || "Contact";
   const photoUrl = hero?.photoUrl || null;
+  const photoX = hero?.photoX ?? 50;
+  const photoY = hero?.photoY ?? 50;
 
   const [titleIndex, setTitleIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -206,6 +208,7 @@ export function HeroSection({ hero, resume }: HeroProps) {
                     alt={name}
                     fill
                     className="object-cover"
+                    style={{ objectPosition: `${photoX}% ${photoY}%` }}
                     priority
                   />
                 </div>

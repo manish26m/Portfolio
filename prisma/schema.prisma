@@ -118,6 +118,8 @@ model Hero {
   tagline      String
   description  String   @db.Text
   photoUrl     String?
+  photoX       Float    @default(50)
+  photoY       Float    @default(50)
   ctaPrimary   String   @default("Explore Projects")
   ctaSecondary String   @default("Download Resume")
   ctaTertiary  String   @default("Contact")
