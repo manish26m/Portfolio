@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Resend } from "resend";
+import { revalidatePath } from "next/cache";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -20,15 +21,22 @@ export async function POST(request: NextRequest) {
       data: { name, email, subject, message },
     });
 
-    // 2. Try to send email notification, but don't fail the request if it errors
+    // 2. Clear Next.js cache so the admin inbox updates immediately
+    revalidatePath("/admin/messages");
+    revalidatePath("/admin");
+
+    // 3. Try to send email notification, but don't fail the request if it errors
     if (resend) {
       try {
         const settings = await prisma.settings.findFirst();
         const adminEmail = settings?.email || process.env.ADMIN_EMAIL;
+        
+        // If the user has a verified domain, they should use it here instead of onboarding@resend.dev
+        const fromEmail = process.env.RESEND_FROM_EMAIL || "Portfolio Contact Form <onboarding@resend.dev>";
 
         if (adminEmail) {
           await resend.emails.send({
-            from: "Portfolio Contact Form <onboarding@resend.dev>", // Resend free tier requires this 'from' address
+            from: fromEmail,
             to: adminEmail,
             subject: `New Contact Form Submission: ${subject || "No Subject"}`,
             text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
